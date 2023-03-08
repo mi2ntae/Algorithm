@@ -20,14 +20,11 @@ public class Main {
 		int[][] memo = new int[K+1][N+1];
 		for(int i = 1; i <= K; i++) {
 			for(int j = 1; j <= N; j++) {
-				if(memo[i-1][j] != 0 && memo[i][j] == 0) memo[i][j] = memo[i-1][j];
-				if(j < scores[i-1][1]) continue;
-				memo[i][j] = Math.max(memo[i-1][j], memo[i-1][j-scores[i-1][1]]+scores[i-1][0]);
+				if(j < scores[i-1][1]) memo[i][j] = memo[i-1][j];
+				else memo[i][j] = Math.max(memo[i-1][j], memo[i-1][j-scores[i-1][1]]+scores[i-1][0]);
 			}
 		}
-		
 		System.out.println(memo[K][N]);
 		br.close();
-		
 	}
 }
