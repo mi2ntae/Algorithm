@@ -7,23 +7,13 @@ public class Main {
 	private static class Room{
 		public ArrayDeque<Integer> fish;
 		public int smell;
+		public int fishSize;
 		
 		public Room() {
 			this.fish = new ArrayDeque<Integer>();
 			this.smell = 0;
+			fishSize = 0;
 		}
-
-		@Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			builder.append("Room [fish=");
-			builder.append(fish);
-			builder.append(", smell=");
-			builder.append(smell);
-			builder.append("]");
-			return builder.toString();
-		}
-		
 	}
 	
 	private static int[] dy = {0, -1, -1, -1, 0, 1, 1, 1};
@@ -86,11 +76,13 @@ public class Main {
 						}
 						moveq.offer(new int[] {newy, newx, cur});
 					}
+					map[i][j].fishSize = 0;
 				}
 			}
 			while(!moveq.isEmpty()) {
 				int[] cur = moveq.poll();
 				map[cur[0]][cur[1]].fish.offer(cur[2]);
+				map[cur[0]][cur[1]].fishSize++;
 			}
 			// 두 턴 전 냄새 사라짐!!
 			for(int i = 0; i < 4; i++) {
@@ -110,6 +102,7 @@ public class Main {
 				sx += ddx[d];
 				if(map[sy][sx].fish.size() > 0) {
 					map[sy][sx].fish.clear();
+					map[sy][sx].fishSize = 0;
 					map[sy][sx].smell = 2;
 				}
 				path -= mok*(int)Math.pow(10, i);
@@ -141,11 +134,10 @@ public class Main {
 			int newy = y+ddy[i];
 			int newx = x+ddx[i];
 			if(0 <= newy && newy < 4 && 0 <= newx && newx < 4) {
-				int res = map[newy][newx].fish.size();
-				ArrayDeque<Integer> tmp = map[newy][newx].fish.clone();
-				map[newy][newx].fish.clear();
+				int res = map[newy][newx].fishSize;
+				map[newy][newx].fishSize = 0;
 				dfs(newy, newx, cnt+1, fish+res, visit*10+(i+1));
-				map[newy][newx].fish = tmp.clone();
+				map[newy][newx].fishSize = res;
 			}
 		}
 	}
