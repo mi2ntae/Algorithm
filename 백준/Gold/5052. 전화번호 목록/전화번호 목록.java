@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Main {
@@ -22,13 +21,8 @@ public class Main {
 			int N = Integer.parseInt(br.readLine());
 			root = new Node();
 			boolean isConsistent = true;
-			String[] arr = new String[N];
-			for(int i = 0; i < N; i++) arr[i] = br.readLine();
-			
-			Arrays.sort(arr, (o1, o2) -> Integer.compare(o1.length(), o2.length()));
-			
 			for(int i = 0; i < N; i++) {
-				if(!insert(arr[i])) isConsistent = false;
+				if(!insert(br.readLine())) isConsistent = false;
 			}
 			if(isConsistent) sb.append("YES\n");
 			else sb.append("NO\n");
@@ -52,6 +46,7 @@ public class Main {
 			}
 		}
 		node.isEnd = true;
+		if(node.childs.size() != 0) return false;
 		return true;
 	}
 }
