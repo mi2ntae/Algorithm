@@ -4,48 +4,68 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Main {
-	private static int N, M;
-	private static int[] parents;
-	
-	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine(), " ");
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		PriorityQueue<int[]> heap = new PriorityQueue<>((o1, o2) -> Integer.compare(o1[2],  o2[2]));
-		for(int i = 0; i < M; i++) {
-			st = new StringTokenizer(br.readLine(), " ");
-			int s = Integer.parseInt(st.nextToken());
-			int d = Integer.parseInt(st.nextToken());
-			int w = Integer.parseInt(st.nextToken());
-			heap.offer(new int[] {s, d, w});
-		}
-		
-		parents = new int[N+1];
-		for(int i = 1; i <= N; i++) parents[i] = i;
-		int tmp = 0;
-		int ans = 0;
-		while(!heap.isEmpty()) {
-			int[] cur = heap.poll();
-			if(union(cur[0], cur[1])) {
-				ans += cur[2];
-				tmp = cur[2];
-			}
-		}
-		System.out.println(ans-tmp);
-		br.close();
-	}
-	
-	private static int find(int a) {
-		if(parents[a] == a) return a;
-		return parents[a] = find(parents[a]);
-	}
-	
-	private static boolean union(int a, int b) {
-		int pa = find(a);
-		int pb = find(b);
-		if(pa == pb) return false;
-		parents[pb] = pa;
-		return true;
-	}
+    private static class Node implements Comparable<Node> {
+        private int a;
+        private int b;
+        private int c;
+
+        public Node(int a, int b, int c) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+        }
+        @Override
+        public int compareTo(Node o) {
+            return this.c - o.c;
+        }
+    }
+    private static int[] p;
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+
+        p = new int[N];
+        for(int i = 0; i < N; i++) p[i] = i;
+        PriorityQueue<Node> heap = new PriorityQueue<>();
+
+        for(int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine(), " ");
+            int a = Integer.parseInt(st.nextToken())-1;
+            int b = Integer.parseInt(st.nextToken())-1;
+            int c = Integer.parseInt(st.nextToken());
+            Node newNode = new Node(a, b, c);
+            heap.offer(newNode);
+        }
+
+        int cnt = 0;
+        int ans = 0;
+        while(!heap.isEmpty()) {
+            Node cur = heap.poll();
+            int a = cur.a;
+            int b = cur.b;
+            int c = cur.c;
+            int tmp = 0;
+            if(union(a, b)) continue;
+            if(++cnt == N-1) break;
+            ans += c;
+        }
+        System.out.println(ans);
+        br.close();
+    }
+
+    private static int uFind(int n) {
+        if(p[n] == n) return n;
+        return p[n] = uFind(p[n]);
+    }
+
+    private static boolean union(int a, int b) {
+        int pa = uFind(a);
+        int pb = uFind(b);
+        if(pa == pb) return true;
+        p[pb] = pa;
+        return false;
+    }
 }
